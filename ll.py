@@ -1,3 +1,4 @@
+from memory_profiler import profile
 import json
 
 class Node:
@@ -147,7 +148,8 @@ class LinkedList:
         info['albumes'] = list(info['albumes'])
         
         return info
-    
+
+@profile 
 def cargar_canciones_desde_json(ruta, playlist):
     with open(ruta, 'r', encoding='utf-8') as file:
         data = json.load(file)
