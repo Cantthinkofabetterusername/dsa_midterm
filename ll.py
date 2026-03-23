@@ -1,5 +1,6 @@
 from memory_profiler import profile
 import json
+import random
 
 class Node:
     def __init__(self, cancion_data: dict):
@@ -19,6 +20,8 @@ class LinkedList:
     def __init__(self):
         self.start = None
         self.end = None  # Nuevo: referencia al último nodo
+        self.current = None
+        self.shuffle = False
 
     def __repr__(self):
         nodes = ['INICIO']
@@ -148,6 +151,68 @@ class LinkedList:
         info['albumes'] = list(info['albumes'])
         
         return info
+    
+    def play(self):
+        if self.start is None:
+            print("Playlist vacía")
+            return
+    
+        self.current = self.start
+        print("Reproduciendo:", self.current)
+
+    def next(self):
+        if self.current is None:
+            print("No hay canción en reproducción")
+            return
+
+        if self.shuffle:
+            pasos = random.randint(1, len(self) - 1)
+            temp = self.current
+        
+            for _ in range(pasos):
+                if temp.next is not None:
+                    temp = temp.next
+                else:
+                 temp = self.start
+        
+            self.current = temp
+        else:
+            if self.current.next is not None:
+                self.current = self.current.next
+            else:
+                self.current = self.start  # loop
+    
+        print("Reproduciendo:", self.current)
+
+    def previous(self):
+            if self.current is None:
+                print("No hay canción en reproducción")
+                return
+
+            if self.shuffle:
+                pasos = random.randint(1, len(self) - 1)
+                temp = self.current
+        
+                for _ in range(pasos):
+                    if temp.prev is not None:
+                        temp = temp.prev
+                    else:
+                        temp = self.end
+        
+                self.current = temp
+            else:
+                if self.current.prev is not None:
+                    self.current = self.current.prev
+                else:
+                    self.current = self.end  # loop
+    
+            print("Reproduciendo:", self.current)
+
+    def toggle_shuffle(self):
+        self.shuffle = not self.shuffle
+        estado = "activado" if self.shuffle else "desactivado"
+        print(f"Shuffle {estado}")
+
 
 @profile 
 def cargar_canciones_desde_json(ruta, playlist):
@@ -160,3 +225,21 @@ def cargar_canciones_desde_json(ruta, playlist):
 
 playlist = LinkedList()
 cargar_canciones_desde_json('canciones.json', playlist)
+
+adentro = True
+print('\nBienvenido!\n')
+while adentro:
+    opcion = input('\nElije entre play/next/previous/shuffle/salir: ')
+    if opcion == 'play':
+        playlist.play()
+    elif opcion == 'next':
+        playlist.next()
+    elif opcion == 'previous':
+        playlist.previous()
+    elif opcion == 'shuffle':
+        playlist.toggle_shuffle()
+    elif opcion == 'salir':
+        print('Saliendo...')
+        adentro = False
+    else:
+        print('Opción inválida.')
