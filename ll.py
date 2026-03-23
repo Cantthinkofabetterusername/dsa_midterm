@@ -1,3 +1,5 @@
+import json
+
 class Node:
     def __init__(self, cancion_data: dict):
         self.cancion = {
@@ -145,3 +147,14 @@ class LinkedList:
         info['albumes'] = list(info['albumes'])
         
         return info
+    
+def cargar_canciones_desde_json(ruta, playlist):
+    with open(ruta, 'r', encoding='utf-8') as file:
+        data = json.load(file)
+        
+        for cancion_data in data:
+            nodo = Node(cancion_data)
+            playlist.insert_at_end(nodo)
+
+playlist = LinkedList()
+cargar_canciones_desde_json('canciones.json', playlist)
